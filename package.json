@@ -24,6 +24,7 @@
     "lasso": "^2.11.16",
     "lasso-marko": "^2.3.0",
     "marko": "^4.4.27",
+    "marko-router": "^1.0.0",
     "moment": "^2.18.1",
     "normat": "^1.2.3",
     "passport": "^0.3.2",
