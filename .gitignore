@@ -59,3 +59,8 @@ typings/
 
 # dotenv environment variables file
 .env
+
+
+# markojs compiled files
+*.marko.js
+build/
