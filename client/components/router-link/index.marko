@@ -1,0 +1,15 @@
+class {
+  onInput(input) {
+    if (!input.path) {
+      throw new Error('Path must be provided to router-link')
+    }
+  }
+
+  handleLinkClick(event) {
+    event.preventDefault()
+    const Component = require('../router/component')
+    Component.history.push(this.input.path)
+  }
+}
+a on-click('handleLinkClick') href=input.path class=input.class style=input.style ${input.attrs}
+  include(input.renderBody) if(input.renderBody)

@@ -1,0 +1,49 @@
+.page-plugins {
+  display: grid
+  grid-template: 1fr auto / 1fr 4fr
+  grid-gap: 1rem
+
+  h1 {
+    grid-column: 1 / span 2
+  }
+
+  .categories {
+    flex: 1
+    padding: 0 .5rem
+    background: #0005
+
+    h2 {
+      text-transform: uppercase
+      font-weight: bold
+      font-size: .8rem
+    }
+
+    ul {
+      padding: 0 .5rem
+
+      li,
+      li a {
+        display: block
+      }
+
+      li a {
+        margin-bottom: .5rem
+        padding: .5rem
+        border-radius: 5px
+        text-decoration: none
+
+        span {
+          margin-right: .5em
+        }
+
+        &.active {
+          background-color: #7289da
+        }
+      }
+    }
+  }
+
+  .list {
+    flex: 3
+  }
+}

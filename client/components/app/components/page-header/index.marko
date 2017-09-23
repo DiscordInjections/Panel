@@ -1,4 +1,27 @@
-header
-  div class="header-wrapper"
-    div class="icon"
-    h1 -- Discord Injections
+div.page-header
+  header
+    // dont use the site name (or the logo) as h1
+    // also put the logo into an img tag
+    // see: https://csswizardry.com/2010/10/your-logo-is-an-image-not-a-h1/
+    img src="/static/img/logo.svg"
+    strong -- Discord Injections
+  nav
+    ul
+      li
+        router-link path="/"
+          img src="/static/img/home.svg" alt="Home"
+      li
+        a href="https://github.com/DiscordInjections/DiscordInjections" target="_blank"
+          img src="/static/img/github.svg" alt="Github"
+      li
+        a href="https://discord.gg/MTPWJxa" target="_blank" title="DTinker Community"
+          img src="/static/img/dtinker.svg" alt="Discord"
+      li
+        router-link path="/themes"
+          img src="/static/img/theme.svg" alt="Themes"
+      li
+        router-link path="/plugins"
+          img src="/static/img/plugin.svg" alt="Plugins"
+      li
+        router-link path="/account"
+          img src="/static/img/account.svg" alt="Account"

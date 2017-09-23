@@ -1,3 +1,8 @@
 {
-  "dependencies": ["./client.css", "require: ./components/app/index.marko"]
+  "dependencies": [
+    "./browser.styl",
+    "./routes/notfound/index.marko",
+    "./routes/home/index.marko",
+    "./routes/plugins/index.marko"
+  ]
 }

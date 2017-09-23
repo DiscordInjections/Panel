@@ -1,10 +1,11 @@
-lasso-page package-path="./browser.json"
-<!DOCTYPE html>
-html lang="en"
+lasso-page name="di" package-path="./browser.json"
+<!doctype html>
+html
   head
-    meta charset="UTF-8"
-    title -- Marko + Lasso
+    meta charset="utf-8"
+    title -- Discord Injections
     lasso-head
   body
-    app
+    app url=data.ctx.request.url redirect=data.ctx.response.redirect.bind(data.ctx.response)
     lasso-body
+    browser-refresh enabled=true

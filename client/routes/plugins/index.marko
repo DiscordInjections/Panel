@@ -1,0 +1,46 @@
+class {
+
+}
+import isActive from "../../components/router/is-active"
+div.page-plugins
+  h1 -- Plugins
+  div.categories
+    h2 -- Categories
+    ul
+      li
+        router-link path="/plugins/all" class={active: isActive("/plugins/all")}
+          ---
+          <span class="ion-cube"/>
+          All
+          ---
+      li
+        router-link path="/plugins/api" class={active: isActive("/plugins/api")}
+          ---
+          <span class="ion-wrench"/>
+          API
+          ---
+      li
+        router-link path="/plugins/fnctionailty" class={active: isActive("/plugins/fnctionailty")}
+          ---
+          <span class="ion-wand"/>
+          Functionality
+          ---
+      li
+        router-link path="/plugins/productivity" class={active: isActive("/plugins/productivity")}
+          ---
+          <span class="ion-clock"/>
+          Productivity
+          ---
+      li
+        router-link path="/plugins/games"
+          ---
+          <span class="ion-ios-game-controller-a"/>
+          Games
+          ---
+      li
+        router-link path="/plugins/misc"
+          ---
+          <span class="ion-asterisk"/>
+          Misc
+          ---
+  div.list -- listing

@@ -1,0 +1,54 @@
+.page-header {
+  display: flex
+  padding: 8px 1rem
+  background: #7289da
+  color: #fff
+  grid-column: 1 / span 3
+
+  header {
+    position: relative
+    flex: 1
+
+    img {
+      width: 5rem
+      height: 100%
+    }
+
+    strong {
+      position: relative
+      bottom: calc(75% - 2rem)
+      font-size: 2rem
+    }
+  }
+
+  nav {
+    position: relative
+    flex: 0
+
+    ul {
+      position: relative
+      top: 25%
+      margin: 0
+      padding: 0
+      // prevent breaking on li elements
+      white-space: nowrap
+
+      li {
+        height = 80px
+        display: inline-block
+        margin: 0 .5rem
+
+        img {
+          width: operate('/', height, 2)
+          height: operate('/', height, 2)
+          border-radius: operate('/', height, 4)
+          transition: all .5s ease
+        }
+
+        img:hover {
+          border-radius: operate('/', height, 8)
+        }
+      }
+    }
+  }
+}

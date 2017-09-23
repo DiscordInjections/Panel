@@ -1,0 +1,73 @@
+div.page-home
+  section.download
+    span -- Download now
+    div
+      button
+        span.ion-social-windows
+        span.description -- Windows installer
+      button
+        span.ion-social-apple
+        span.description -- Apple installer
+      button
+        span.ion-social-tux
+        span.description -- Linux installer
+      button.manual
+        span.ion-social-github
+        span.description -- Manual install
+      p -- Please choose an installer fit for your platform, or click on the octocat to get manual installation instructions.
+  bubbles
+  section
+    h1 -- Discord Injections client side mod
+    p
+      -- DiscordInjections (DI) is a utility to inject your Discord client with CSS and JS, in the form of plugins.<br/>
+    h2.hidden -- Features
+    ul.features
+      li
+        h3
+          ---
+          <span.ion-android-checkmark-circle/>
+          Surviving Injector
+          ---
+        p
+          ---
+          Unlike most Discord client side mods, this Injector does its best to not get deleted by Discord updates.
+          <br/>
+          The injector is not editing any files of Discord itself and thus is very portable and has a fast and easy manual uninstall method.
+          ---
+      li
+        h3
+          ---
+          <span.ion-paintbrush/>
+          Custom CSS and themes
+          ---
+        p
+          ---
+          DI comes with a fast, simple and watching css injector. It updates the css live and on the fly on changes.
+          It also supports local
+          <code>@import</code>'s - no more hosting stuff on the web!
+          <br/>
+          If you want even more, there is a theme manager plugin, that allows you to setup a custom theme stack, that
+          applies multiple CSS files at once.
+          ---
+      li
+        h3
+          ---
+          <span.ion-outlet/>
+          Plugins
+          ---
+        p
+          ---
+          DI implements the most modern plugin manager seen yet. It has official support for dependencies and inbuilt
+          plugin manager. It boasts an inbuilt and easily extensible command system. An even easier wrapper is given
+          by the external commands plugin.
+          ---
+  section#changelog.changelog
+    h2
+      ---
+      <span class="ion-clipboard"/>
+      Changelog
+      ---
+    p if(state.versions.length <= 0) -- Loading...
+    for(v in state.versions)
+      h3 -- ${v.name}
+      p -- $!{v.html}
