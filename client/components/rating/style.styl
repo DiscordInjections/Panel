@@ -1,0 +1,26 @@
+.star-rating {
+  display: inline-block
+  padding: .1rem .5rem
+  overflow: hidden
+  vertical-align: middle
+
+  .star {
+    cursor: pointer
+
+    &.active {
+      filter: drop-shadow(0 0 2px #7289da)
+    }
+
+    &.hover svg.selected {
+      fill: #7289da
+    }
+
+    svg {
+      fill: black
+
+      &.selected {
+        fill: gold
+      }
+    }
+  }
+}

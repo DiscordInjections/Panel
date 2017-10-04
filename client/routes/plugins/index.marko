@@ -1,46 +1,66 @@
-class {
-
-}
 import isActive from "../../components/router/is-active"
 div.page-plugins
   h1 -- Plugins
   div.categories
-    h2 -- Categories
-    ul
-      li
-        router-link path="/plugins/all" class={active: isActive("/plugins/all")}
-          ---
-          <span class="ion-cube"/>
-          All
-          ---
-      li
-        router-link path="/plugins/api" class={active: isActive("/plugins/api")}
-          ---
-          <span class="ion-wrench"/>
-          API
-          ---
-      li
-        router-link path="/plugins/fnctionailty" class={active: isActive("/plugins/fnctionailty")}
-          ---
-          <span class="ion-wand"/>
-          Functionality
-          ---
-      li
-        router-link path="/plugins/productivity" class={active: isActive("/plugins/productivity")}
-          ---
-          <span class="ion-clock"/>
-          Productivity
-          ---
-      li
-        router-link path="/plugins/games"
-          ---
-          <span class="ion-ios-game-controller-a"/>
-          Games
-          ---
-      li
-        router-link path="/plugins/misc"
-          ---
-          <span class="ion-asterisk"/>
-          Misc
-          ---
-  div.list -- listing
+    div
+      h2 -- Categories
+      ul
+        li
+          router-link path="/plugins/all" class={active: isActive("/plugins/all")}
+            ---
+            <span class="ion-cube"/>
+            All
+            ---
+        li
+          router-link path="/plugins/api" class={active: isActive("/plugins/api")}
+            ---
+            <span class="ion-wrench"/>
+            API
+            ---
+        li
+          router-link path="/plugins/fnctionailty" class={active: isActive("/plugins/fnctionailty")}
+            ---
+            <span class="ion-wand"/>
+            Functionality
+            ---
+        li
+          router-link path="/plugins/productivity" class={active: isActive("/plugins/productivity")}
+            ---
+            <span class="ion-clock"/>
+            Productivity
+            ---
+        li
+          router-link path="/plugins/games"
+            ---
+            <span class="ion-ios-game-controller-a"/>
+            Games
+            ---
+        li
+          router-link path="/plugins/misc"
+            ---
+            <span class="ion-asterisk"/>
+            Misc
+            ---
+  div.filter
+    h2 -- Filter
+    div
+      div.search
+        label for="filter-search"
+          span class="ion-search" -- Search
+        input#label-search type="search" placeholder="Search" value=state.search
+      div.rating
+        span -- Minimum Rating
+        rating max=5 current=state.filterRating size="1rem" on-change("onChangeFilterRating")
+  div.list
+    ---
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ita fit cum gravior, tum etiam splendidior oratio. Itaque primos congressus copulationesque et consuetudinum instituendarum voluntates fieri propter voluptatem; Ut ad minora veniam, mathematici, poëtae, musici, medici denique ex hac tamquam omnium artificum officina profecti sunt. Duo Reges: constructio interrete. Deinde disputat, quod cuiusque generis animantium statui deceat extremum. Quos qui tollunt et nihil posse percipi dicunt, ii remotis sensibus ne id ipsum quidem expedire possunt, quod disserunt. Ut in geometria, prima si dederis, danda sunt omnia. Sin tantum modo ad indicia veteris memoriae cognoscenda, curiosorum. Videmusne ut pueri ne verberibus quidem a contemplandis rebus perquirendisque deterreantur? Nulla profecto est, quin suam vim retineat a primo ad extremum. Haec dicuntur inconstantissime. Nos commodius agimus. Atque ab isto capite fluere necesse est omnem rationem bonorum et malorum.<br/>
+    Si qua in iis corrigere voluit, deteriora fecit. Peccata autem partim esse tolerabilia, partim nullo modo, propterea quod alia peccata plures, alia pauciores quasi numeros officii praeterirent. Sed potestne rerum maior esse dissensio? Omnes enim iucundum motum, quo sensus hilaretur. Haec quo modo conveniant, non sane intellego.<br/>
+    Praeclare enim Plato: Beatum, cui etiam in senectute contigerit, ut sapientiam verasque opiniones assequi possit. Cur tantas regiones barbarorum pedibus obiit, tot maria transmisit? Quo modo autem optimum, si bonum praeterea nullum est? Ac ne plura complectar-sunt enim innumerabilia-, bene laudata virtus voluptatis aditus intercludat necesse est. Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat. Scio enim esse quosdam, qui quavis lingua philosophari possint; Vitae autem degendae ratio maxime quidem illis placuit quieta. Octavio fuit, cum illam severitatem in eo filio adhibuit, quem in adoptionem D. Quo modo autem philosophus loquitur? Plane idem, inquit, et maxima quidem, qua fieri nulla maior potest.<br/>
+    Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Sed quot homines, tot sententiae; Cum salvum esse flentes sui respondissent, rogavit essentne fusi hostes. Ergo hoc quidem apparet, nos ad agendum esse natos. Conferam tecum, quam cuique verso rem subicias; Qui est in parvis malis. Cum autem venissemus in Academiae non sine causa nobilitata spatia, solitudo erat ea, quam volueramus. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur?<br/>
+    Nullum inveniri verbum potest quod magis idem declaret Latine, quod Graece, quam declarat voluptas. Quod enim ne vivus quidem, inquit, diutius sentire poterat, quam dum fruebatur, quo modo id potuit mortuo permanere? Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L. Superiores tres erant, quae esse possent, quarum est una sola defensa, eaque vehementer. Non dolere, inquam, istud quam vim habeat postea videro; Morbo gravissimo affectus, exul, orbus, egens, torqueatur eculeo: quem hunc appellas, Zeno? Ut in voluptate sit, qui epuletur, in dolore, qui torqueatur. Quid, cum volumus nomina eorum, qui quid gesserint, nota nobis esse, parentes, patriam, multa praeterea minime necessaria? Piso igitur hoc modo, vir optimus tuique, ut scis, amantissimus.<br/>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ita fit cum gravior, tum etiam splendidior oratio. Itaque primos congressus copulationesque et consuetudinum instituendarum voluntates fieri propter voluptatem; Ut ad minora veniam, mathematici, poëtae, musici, medici denique ex hac tamquam omnium artificum officina profecti sunt. Duo Reges: constructio interrete. Deinde disputat, quod cuiusque generis animantium statui deceat extremum. Quos qui tollunt et nihil posse percipi dicunt, ii remotis sensibus ne id ipsum quidem expedire possunt, quod disserunt. Ut in geometria, prima si dederis, danda sunt omnia. Sin tantum modo ad indicia veteris memoriae cognoscenda, curiosorum. Videmusne ut pueri ne verberibus quidem a contemplandis rebus perquirendisque deterreantur? Nulla profecto est, quin suam vim retineat a primo ad extremum. Haec dicuntur inconstantissime. Nos commodius agimus. Atque ab isto capite fluere necesse est omnem rationem bonorum et malorum.<br/>
+    Si qua in iis corrigere voluit, deteriora fecit. Peccata autem partim esse tolerabilia, partim nullo modo, propterea quod alia peccata plures, alia pauciores quasi numeros officii praeterirent. Sed potestne rerum maior esse dissensio? Omnes enim iucundum motum, quo sensus hilaretur. Haec quo modo conveniant, non sane intellego.<br/>
+    Praeclare enim Plato: Beatum, cui etiam in senectute contigerit, ut sapientiam verasque opiniones assequi possit. Cur tantas regiones barbarorum pedibus obiit, tot maria transmisit? Quo modo autem optimum, si bonum praeterea nullum est? Ac ne plura complectar-sunt enim innumerabilia-, bene laudata virtus voluptatis aditus intercludat necesse est. Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat. Scio enim esse quosdam, qui quavis lingua philosophari possint; Vitae autem degendae ratio maxime quidem illis placuit quieta. Octavio fuit, cum illam severitatem in eo filio adhibuit, quem in adoptionem D. Quo modo autem philosophus loquitur? Plane idem, inquit, et maxima quidem, qua fieri nulla maior potest.<br/>
+    Nam, ut sint illa vendibiliora, haec uberiora certe sunt. Sed quot homines, tot sententiae; Cum salvum esse flentes sui respondissent, rogavit essentne fusi hostes. Ergo hoc quidem apparet, nos ad agendum esse natos. Conferam tecum, quam cuique verso rem subicias; Qui est in parvis malis. Cum autem venissemus in Academiae non sine causa nobilitata spatia, solitudo erat ea, quam volueramus. Cur igitur easdem res, inquam, Peripateticis dicentibus verbum nullum est, quod non intellegatur?<br/>
+    Nullum inveniri verbum potest quod magis idem declaret Latine, quod Graece, quam declarat voluptas. Quod enim ne vivus quidem, inquit, diutius sentire poterat, quam dum fruebatur, quo modo id potuit mortuo permanere? Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L. Superiores tres erant, quae esse possent, quarum est una sola defensa, eaque vehementer. Non dolere, inquam, istud quam vim habeat postea videro; Morbo gravissimo affectus, exul, orbus, egens, torqueatur eculeo: quem hunc appellas, Zeno? Ut in voluptate sit, qui epuletur, in dolore, qui torqueatur. Quid, cum volumus nomina eorum, qui quid gesserint, nota nobis esse, parentes, patriam, multa praeterea minime necessaria? Piso igitur hoc modo, vir optimus tuique, ut scis, amantissimus.<br/>
+    ---

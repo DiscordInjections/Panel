@@ -1,6 +1,6 @@
 .page-plugins {
   display: grid
-  grid-template: 1fr auto / 1fr 4fr
+  grid-template: 4rem 3rem auto / 1fr 4fr
   grid-gap: 1rem
 
   h1 {
@@ -8,42 +8,94 @@
   }
 
   .categories {
-    flex: 1
-    padding: 0 .5rem
-    background: #0005
+    padding: 0
+    grid-row: 2 / span 2
 
-    h2 {
-      text-transform: uppercase
-      font-weight: bold
-      font-size: .8rem
-    }
-
-    ul {
+    > div {
       padding: 0 .5rem
+      border: 1px solid transparent // add a transparent border, so padding gets rendered
+      background: #0005
 
-      li,
-      li a {
-        display: block
+      h2 {
+        text-transform: uppercase
+        font-weight: bold
+        font-size: .8rem
       }
 
-      li a {
-        margin-bottom: .5rem
-        padding: .5rem
-        border-radius: 5px
-        text-decoration: none
+      ul {
+        padding: 0 .5rem
 
-        span {
-          margin-right: .5em
+        li,
+        li a {
+          display: block
         }
 
-        &.active {
-          background-color: #7289da
+        li a {
+          margin-bottom: .5rem
+          padding: .5rem
+          border-radius: 5px
+          text-decoration: none
+
+          span {
+            margin-right: .5em
+          }
+
+          &.active {
+            background-color: #7289da
+          }
         }
       }
     }
   }
 
+  .filter {
+    padding: .5rem
+    background: #0005
+
+    h2 {
+      font-size: 0
+    }
+
+    > div {
+      display: flex
+
+      .search {
+        position: relative
+        order: 1
+        margin-left: auto
+        padding-right: .1rem
+
+        span {
+          position: absolute
+          right: -.1rem
+          font-size: 0
+
+          &:before {
+            margin-right: .5rem
+            padding-top: .25rem
+            font-size: 1.5rem
+          }
+        }
+
+        input {
+          position: relative
+          top: .25rem
+          padding: .2rem 1.4rem .2rem .2rem
+          border: none
+          border-radius: 4px
+          background: #fff4
+          color: #fffa
+        }
+      }
+
+      .rating {
+        margin-top: .3rem
+      }
+    }
+  }
+
   .list {
-    flex: 3
+    padding: .5rem
+    background: #0005
   }
 }
