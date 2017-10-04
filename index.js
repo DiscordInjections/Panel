@@ -55,7 +55,8 @@ app.use(require('koa-json-error')())
 if (process.env.DISCORD_WEBHOOK) {
   app.use(require('./lib/middleware').discord(process.env.DISCORD_WEBHOOK))
 }
-app.use(require('./lib/middleware').logger(logger.child({ module: 'http' })))
+
+app.use(require('./lib/middleware').logger(logger.child({ module: 'http' }), !!process.env.VERBOSE))
 
 const plugins = [
   'lasso-marko',
