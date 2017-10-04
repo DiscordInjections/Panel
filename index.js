@@ -7,6 +7,7 @@ const Router = require('impress-router')
 const Redis = require('ioredis')
 const CSRF = require('koa-csrf')
 const http = require('http')
+const { Model } = require('objection')
 const url = require('url')
 const mount = require('koa-mount')
 const Grant = require('grant').koa()
@@ -37,6 +38,11 @@ const logger = createLogger({
 
 // database connections
 const redis = new Redis(process.env.REDIS)
+Model.knex(
+  require('knex')({
+    client: 'postgres',
+    connection: process.env.POSTGRES
+  })
 )
 
 // load all dem models
