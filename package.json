@@ -33,6 +33,7 @@
     "lasso-marko": "^2.3.0",
     "lasso-optimize-iife": "^1.0.2",
     "lasso-stylus": "^1.1.7",
+    "longjohn": "^0.2.12",
     "markdown-it": "^8.4.0",
     "marko": "^4.4.27",
     "moment": "^2.18.1",
@@ -42,6 +43,7 @@
     "passport-discord": "^0.1.2",
     "pg": "^7.0.1",
     "qs": "^6.5.1",
+    "scrypt": "^6.0.3",
     "session": "^0.1.0",
     "stylus": "^0.54.5",
     "stylus-require-css-evaluator": "0.0.3"
