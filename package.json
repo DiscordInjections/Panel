@@ -4,10 +4,11 @@
   "description": "A panel for DiscordInjections and its plugins",
   "main": "index.js",
   "author": "stupid cat",
-  "contributors": ["Kura"],
+  "contributors": [
+    "Kura"
+  ],
   "license": "MIT",
   "dependencies": {
-    "bookshelf": "^0.10.4",
     "browser-refresh-taglib": "^1.1.0",
     "bunyan": "^1.8.12",
     "dotenv-safe": "^4.0.4",
@@ -31,12 +32,10 @@
     "lasso": "^2.11.16",
     "lasso-marko": "^2.3.0",
     "lasso-optimize-iife": "^1.0.2",
-    "lasso-prepack": "0.0.1",
     "lasso-stylus": "^1.1.7",
     "markdown-it": "^8.4.0",
     "marko": "^4.4.27",
     "moment": "^2.18.1",
-    "node-fetch": "^1.7.3",
     "normalize.css": "^7.0.0",
     "normat": "^1.2.3",
     "objection": "^0.8.9",
@@ -44,9 +43,8 @@
     "pg": "^7.0.1",
     "qs": "^6.5.1",
     "session": "^0.1.0",
-    "sheet-router": "^4.2.3",
     "stylus": "^0.54.5",
-    "stylus-require-css-evaluator": "0.0.3",
+    "stylus-require-css-evaluator": "0.0.3"
   },
   "devDependencies": {
     "browser-refresh": "^1.7.2",
