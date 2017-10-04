@@ -7,8 +7,23 @@ const Router = require('impress-router')
 const Redis = require('ioredis')
 const CSRF = require('koa-csrf')
 const http = require('http')
-const passport = require('koa-passport')
-const DiscordStrategy = require('passport-discord')
+const url = require('url')
+const mount = require('koa-mount')
+const Grant = require('grant').koa()
+const oauthRedirect = url.parse(process.env.HOST)
+const grant = new Grant({
+  server: {
+    state: true,
+    callback: '/account/login/callback',
+    protocol: oauthRedirect.protocol.substr(0, oauthRedirect.protocol.length - 1),
+    host: oauthRedirect.host
+  },
+  discord: {
+    key: process.env.OAUTH_KEY,
+    secret: process.env.OAUTH_SECRET,
+    scope: ['identify', 'email']
+  }
+})
 
 // logger
 const { createLogger } = require('bunyan')
@@ -22,33 +37,10 @@ const logger = createLogger({
 
 // database connections
 const redis = new Redis(process.env.REDIS)
-
-// passport
-passport.use(
-  new DiscordStrategy(
-    {
-      clientID: process.env.OAUTH_KEY,
-      clientSecret: process.env.OAUTH_SECRET,
-      callbackURL: process.env.HOST + '/account/login/callback',
-      scope: ['identify', 'email']
-    },
-    (access, refresh, profile, cb) => cb(null, {})
-  )
 )
-/*
-passport.serializeUser(function (user, done) {
-  done(null, user.id)
-})
 
-passport.deserializeUser(async function (id, done) {
-  try {
-    const user = await fetchUser()
-    done(null, user)
-  } catch (err) {
-    done(err)
-  }
-})
-*/
+// load all dem models
+require('./models')
 
 // webapplication
 const app = new Koa()
@@ -100,8 +92,7 @@ app.use(
     store: require('./lib/store').create(redis)
   })
 )
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(mount(grant))
 app.use(
   new CSRF({
     invalidSessionSecretMessage: 'Invalid session secret',
