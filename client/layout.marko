@@ -1,0 +1,17 @@
+lasso-page name="di" package-path="./browser.json"
+<!doctype html>
+html
+  head
+    meta charset="utf-8"
+    title
+      -- Discord Injections
+      if(input.title) -- » ${input.title}
+    lasso-head
+  body
+    div.wrapper
+      page-header
+      main
+        include(input.component, input.data)
+      page-footer
+    lasso-body
+    browser-refresh enabled=true

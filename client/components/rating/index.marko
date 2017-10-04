@@ -1,0 +1,88 @@
+class {
+  onCreate(input) {
+    this.state = {
+      hover: false,
+      max: input.max || 5,
+      selection: input.selection || 0,
+      selected: input.selected || 0
+    }
+
+    input.current = input.current || 0
+  }
+
+  onMouseOver(ev, el) {
+    var star = el
+
+    while (!star.classList.contains("star")) {
+      star = star.parentNode
+      if (!star || !star.classList) {
+        return this.onMouseOut()
+      }
+    }
+    var selection = 1
+    var prevSibling = star.previousElementSibling
+    while (prevSibling.classList.contains("star")) {
+      selection++
+      prevSibling = prevSibling.previousElementSibling
+    }
+
+    this.state.hover = true
+    this.state.selection = selection
+  }
+
+  onMouseOut(ev, el) {
+    this.state.hover = false
+  }
+
+  onClick(ev, el) {
+    var star = el
+
+    while (!star.classList.contains("star")) {
+      star = star.parentNode
+      if (!star || !star.classList) {
+        return this.onMouseOut()
+      }
+    }
+
+    var selection = 1
+    var prevSibling = star.previousElementSibling
+    while (prevSibling.classList.contains("star")) {
+      selection++
+      prevSibling = prevSibling.previousElementSibling
+    }
+
+    if (this.state.selected === selection) {
+      this.state.selected = 0
+    } else {
+      this.state.selected = selection
+    }
+
+    this.emit("change", this.state.selected)
+  }
+}
+
+div.star-rating on-mouseout("onMouseOut")
+  svg style="display: none"
+    symbol id="star" viewBox="0 0 1024 1024"
+      path d="M636 386.016h380l-304 226.016 100 368-306.016-220-304 220 110.016-366.016-304-228h384l122.016-368z"
+  span.star for(idx from 0 to state.max - 1)  class={active: state.selected > idx, hover: state.hover} on-mouseover("onMouseOver") on-mouseout("onMouseOut") on-click("onClick")
+    if(state.hover)
+      if(state.selection > idx)
+        svg.selected style={height: input.size, width: input.size}
+          use xlink:href="#star"
+      else
+        svg style={height: input.size, width: input.size}
+          use xlink:href="#star"
+    else-if((input.current - idx) > 1)
+      svg.selected style={height: input.size, width: input.size}
+        use xlink:href="#star"
+    else
+      $ const fraction = (input.current - idx) * 100
+      if(fraction == 0)
+        svg style={height: input.size, width: input.size}
+          use xlink:href="#star"
+      else
+        svg.selected style={height: input.size, width: input.size, clipPath: `inset(0 ${100 - fraction}% 0 0)`}
+          use xlink:href="#star"
+        svg style={height: input.size, width: input.size, clipPath: `inset(0 0 0 ${fraction}%)`, marginLeft: `-${input.size}`}
+          use xlink:href="#star"

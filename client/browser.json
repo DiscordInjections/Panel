@@ -1,8 +1,5 @@
 {
   "dependencies": [
-    "./browser.styl",
-    "./routes/notfound/index.marko",
-    "./routes/home/index.marko",
-    "./routes/plugins/index.marko"
+    "./style.styl"
   ]
 }

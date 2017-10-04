@@ -3,7 +3,6 @@ const isDev = process.env.NODE_ENV === 'development'
 const path = require('path')
 
 const Koa = require('koa')
-const Router = require('impress-router')
 const Redis = require('ioredis')
 const CSRF = require('koa-csrf')
 const http = require('http')
@@ -79,19 +78,7 @@ require('lasso').configure({
 app.use(require('./lib/middleware').serveStatic({ urlPrefix: '/assets' }))
 app.use(require('koa-static')(path.join(__dirname, 'static')))
 
-/*
-const express = require("express")
-global.config = require("./config.json")
-const { Client, Pool } = require("pg")
-global.pg_pool = new Pool(config.db)
-global.helpers = require("./helpers")
-global.userMap = {}
-const WebsocketServer = require("./backend/websocket")
-const websocketServer = new WebsocketServer(app)
-*/
-
-const router = new Router()
-require('./routes')(router)
+app.use(require('./lib/middleware').qs())
 app.use(
   require('koa-session2')({
     key: 'disid',
@@ -110,11 +97,8 @@ app.use(
   })
 )
 app.use(require('koa-json-body')())
-app.use(router)
-app.use(async (ctx, next) => {
-  ctx.type = 'html'
-  ctx.body = require('./client/index.marko').stream({ ctx })
-})
+app.use(require('./lib/middleware').marko(path.join(__dirname, 'client'), 'layout.marko'))
+app.use(require('./routes'))
 
 const port = +process.env.PORT
 const host = process.env.BIND

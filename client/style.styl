@@ -31,17 +31,16 @@ a:hover {
   font-size: 0
 }
 
-/*
-   section {
-   margin: 0 auto
-   max-width: 94%
-   width: 700px
-   }
-   
-   @media only screen and (max-width: 768px) {
-   /* Mobile * /
-   section {
-   width: 100%
-   }
-   }
-*/
+.wrapper {
+  min-height: 100vh
+  display: grid
+  grid-template-columns: 1fr 1080px 1fr
+  grid-template-rows: 5rem auto 7rem
+
+  grid-template-areas: "header header header" "leftspan main rightspan" "footer footer footer"
+
+  main {
+    grid-area: main
+    margin-top: 1rem
+  }
+}

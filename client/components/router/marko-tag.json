@@ -1,7 +1,0 @@
-{
-  "@initialRoute": "string",
-  "@routes": "object",
-  "@attrs": "object",
-  "@routePath": "string",
-  "@redirect": "function"
-}
