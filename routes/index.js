@@ -7,7 +7,9 @@ module.exports = router
 //router.mount('/api', require('./api'))
 router.use('/account', require('./account'))
 
-router.get("/", ctx => ctx.body="yay")
+router.get("/", ctx => {
+  ctx.marko("routes/home")
+})
 
 /*
 router.use('/api/settings/:userid', async (ctx, next) => {
