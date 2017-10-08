@@ -43,6 +43,9 @@ router.get('/discord/callback', async ctx => {
   } else {
     user = await User.query().patch(data).returning('*')
   }
+  if (user.length) {
+    user = user[0]
+  }
 
   ctx.session.user = user.id
 
