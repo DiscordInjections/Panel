@@ -4,11 +4,12 @@ const Router = require('impress-router')
 const router = new Router()
 module.exports = router
 
-//router.mount('/api', require('./api'))
+// router.mount('/api', require('./api'))
+router.use('/connect', require('./connect'))
 router.use('/account', require('./account'))
 
-router.get("/", ctx => {
-  ctx.marko("routes/home")
+router.get('/', ctx => {
+  ctx.marko('routes/home')
 })
 
 /*

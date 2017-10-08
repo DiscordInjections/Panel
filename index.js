@@ -8,22 +8,6 @@ const CSRF = require('koa-csrf')
 const http = require('http')
 const { Model } = require('objection')
 const url = require('url')
-const mount = require('koa-mount')
-const Grant = require('grant').koa()
-const oauthRedirect = url.parse(process.env.HOST)
-const grant = new Grant({
-  server: {
-    state: true,
-    callback: '/account/login/callback',
-    protocol: oauthRedirect.protocol.substr(0, oauthRedirect.protocol.length - 1),
-    host: oauthRedirect.host
-  },
-  discord: {
-    key: process.env.OAUTH_KEY,
-    secret: process.env.OAUTH_SECRET,
-    scope: ['identify', 'email']
-  }
-})
 
 // logger
 const { createLogger } = require('bunyan')
@@ -86,7 +70,7 @@ app.use(
     store: require('./lib/store').create(redis)
   })
 )
-app.use(mount(grant))
+app.use(require('./lib/middleware').sessionLoader())
 app.use(
   new CSRF({
     invalidSessionSecretMessage: 'Invalid session secret',
