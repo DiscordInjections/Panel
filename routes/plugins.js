@@ -28,7 +28,7 @@ router.get('/:category/:page?', async ctx => {
   if (ctx.params.category !== 'all') {
     q.where('category', '=', ctx.params.category)
   }
-  const plugins = await q.page(ctx.params.page, 10)
+  const plugins = await q.page(ctx.params.page - 1, 10)
   plugins.pages = Math.round(plugins.total / 10 + 0.5)
 
   // TODO: allow adding of plugins
