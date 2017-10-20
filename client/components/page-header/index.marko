@@ -24,4 +24,7 @@ div.page-header
           img src="/static/img/plugin.svg" alt="Plugins"
       li
         a href="/account"
-          img src="/static/img/account.svg" alt="Account"
+          if(input.user && input.user.avatar)
+            img src="https://cdn.discordapp.com/avatars/${input.user.id}/${input.user.avatar}.webp" alt="${input.user.name}"
+          else
+            img src="/static/img/account.svg" alt="Account"
