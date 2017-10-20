@@ -1,43 +1,43 @@
 import moment from "moment"
 import md from "markdown-it"
 div.page-plugins
-  h1 -- Plugins
+  h1 -- Add a new Plugin
   div.categories
     div
       h2 -- Categories
       ul
         li
-          a href="/plugins/all" class={active: data.category == "all"}
+          a href="/plugins/all"
             ---
             <span class="ion-cube"/>
             All
             ---
         li
-          a href="/plugins/api" class={active: data.category == "api"}
+          a href="/plugins/api"
             ---
             <span class="ion-wrench"/>
             API
             ---
         li
-          a href="/plugins/func" class={active: data.category == "func"}
+          a href="/plugins/func"
             ---
             <span class="ion-wand"/>
             Functionality
             ---
         li
-          a href="/plugins/prod" class={active: data.category == "prod"}
+          a href="/plugins/prod"
             ---
             <span class="ion-clock"/>
             Productivity
             ---
         li
-          a href="/plugins/games" class={active: data.category == "games"}
+          a href="/plugins/games"
             ---
             <span class="ion-ios-game-controller-a"/>
             Games
             ---
         li
-          a href="/plugins/misc" class={active: data.category == "misc"}
+          a href="/plugins/misc"
             ---
             <span class="ion-asterisk"/>
             Misc
@@ -45,7 +45,7 @@ div.page-plugins
       h2 -- Actions
       ul
         li
-          a href="/plugins/add"
+          a.active href="/plugins/add"
             ---
             <span class="ion-plus"/>
             Add

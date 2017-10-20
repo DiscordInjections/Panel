@@ -7,6 +7,7 @@ module.exports = router
 // router.mount('/api', require('./api'))
 router.use('/connect', require('./connect'))
 router.use('/account', require('./account'))
+router.use('/plugins', require('./plugins'))
 
 router.get('/', ctx => {
   ctx.marko('routes/home')

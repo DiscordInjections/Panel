@@ -10,8 +10,7 @@ module.exports = class {
   }
 
   onInput (input) {
-    this.state.search = input.query.search || ''
-    this.state.filterRating = +input.query.rating || 0
+    ;(this.state.search = input.query.search || ''), (this.state.filterRating = +input.query.rating || 0)
     this.state.page = +input.query.page || 1
   }
 
