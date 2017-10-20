@@ -1,5 +1,3 @@
 {
-  "dependencies": [
-    "./style.styl"
-  ]
+  "dependencies": ["./style.styl", "./routes/*/index.marko"]
 }
