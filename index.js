@@ -2,6 +2,8 @@ require('./lib/patcher')
 const isDev = process.env.NODE_ENV === 'development'
 const path = require('path')
 
+const dwh = require('./lib/dwh')
+
 const Koa = require('koa')
 const Redis = require('ioredis')
 const CSRF = require('koa-csrf')
@@ -17,6 +19,26 @@ const logger = createLogger({
   src: isDev,
   stream: process.stderr,
   level: isDev ? 'trace' : 'info'
+})
+
+process.on('unhandledRejection', (err, promise) => {
+  logger.error({ err, promise }, 'unhandled rejection!')
+  dwh(process.env.DISCORD_WEBHOOK, {
+    title: 'Error',
+    description: 'An unhandled rejection happened!',
+    color: 9577852,
+    fields: [
+      {
+        name: 'Message',
+        value: err.message,
+        inline: true
+      },
+      {
+        name: 'Stack',
+        value: '```' + err.stack + '```'
+      }
+    ]
+  })
 })
 
 // database connections
@@ -36,11 +58,7 @@ const app = new Koa()
 app.keys = JSON.parse(process.env.COOKIE_SECRET)
 
 app.use(require('koa-json-error')())
-if (process.env.DISCORD_WEBHOOK) {
-  app.use(require('./lib/middleware').discord(process.env.DISCORD_WEBHOOK))
-}
-
-app.use(require('./lib/middleware').logger(logger.child({ module: 'http' }), !!process.env.VERBOSE))
+app.use(require('./lib/middleware').discord(process.env.DISCORD_WEBHOOK))
 
 const plugins = [
   'lasso-marko',
@@ -94,34 +112,22 @@ app.listen(port, host, () => {
     process.send('online')
   }
 
-  if (process.env.DISCORD_WEBHOOK) {
-    fetch(process.env.DISCORD_WEBHOOK + '?wait=1', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+  dwh(process.env.DISCORD_WEBHOOK, {
+    title: 'Status',
+    description: 'DI-Panel has been started',
+    color: 6469211, // 9577852
+    timestamp: new Date().toISOString(),
+    fields: [
+      {
+        name: 'Host',
+        value: host,
+        inline: true
       },
-      body: JSON.stringify({
-        embeds: [
-          {
-            title: 'Status',
-            description: 'DI-Panel has been started',
-            color: 6469211, // 9577852
-            timestamp: new Date().toISOString(),
-            fields: [
-              {
-                name: 'Host',
-                value: host,
-                inline: true
-              },
-              {
-                name: 'Port',
-                value: port,
-                inline: true
-              }
-            ]
-          }
-        ]
-      })
-    }).catch(err => logger.error({ err }, 'failed to post to discord'))
-  }
+      {
+        name: 'Port',
+        value: port,
+        inline: true
+      }
+    ]
+  })
 })
