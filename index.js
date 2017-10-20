@@ -101,6 +101,7 @@ app.use(
   })
 )
 app.use(require('./lib/middleware').sessionLoader())
+app.use(require('./lib/middleware').cache(redis))
 app.use(
   new CSRF({
     invalidSessionSecretMessage: 'Invalid session secret',
