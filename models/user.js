@@ -12,7 +12,7 @@ module.exports = class User extends Model {
   }
 
   get oauthToken () {
-    const token = oauth2.createToken(this.oauth_access_token, this.oauth_refresh_token)
+    const token = oauth2.discord.createToken(this.oauth_access_token, this.oauth_refresh_token)
     token.expiresIn(new Date(this.oauth_expires))
     return token
   }
@@ -30,8 +30,19 @@ module.exports = class User extends Model {
     return this
   }
 
-  fetch (url, headers) {
-    return fetch(url, this.oauthToken.sign(headers))
+  get githubToken () {
+    const token = oauth2.github.createToken(this.github_access_token)
+    token.tokenType = 'bearer'
+    return token
+  }
+
+  fetch (url, headers = {}) {
+    return fetch(url, this.oauthToken.sign({ url, headers }))
+  }
+
+  fetchGithub (url, headers = {}) {
+    console.log(this.githubToken.sign({ url, headers }))
+    return fetch(url, this.githubToken.sign({ url, headers }))
   }
 
   async verify (token) {

@@ -1,2 +1,28 @@
+macro avatar(u)
+  if(u.avatar.substr(0, 2) == "a_")
+    img.profile src="https://cdn.discordapp.com/avatars/${input.user.id}/${input.user.avatar}.gif" alt="Discord Avatar"
+  else
+    img.profile src="https://cdn.discordapp.com/avatars/${input.user.id}/${input.user.avatar}.webp" alt="Discord Avatar"
 div.page-account
-  -- account lol
+  div
+    div.accounts
+      h2 -- Connected Accounts
+      // discord account
+      div.discord
+        h3.hidden -- Discord
+        avatar(input.user)
+        span.username -- ${data.user.username}#${data.user.discriminator}
+        // nothing to add in here ;)
+      div.github class={connect: !input.github}
+        h3.hidden -- Github
+        if(!input.github)
+          a href="/account/github" -- connect
+        else
+          img.profile src=input.github.avatar_url alt="Github Avatar"
+          span.username -- ${input.github.login}
+  div
+    div.plugins
+      h2 -- Your Plugins
+      ul
+        li for(plugin in input.plugins)
+    div.themes -- here are your themes
