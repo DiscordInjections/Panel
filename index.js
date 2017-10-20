@@ -91,6 +91,8 @@ require('lasso').configure({
 app.use(require('./lib/middleware').serveStatic({ urlPrefix: '/assets' }))
 app.use(require('koa-static')(path.join(__dirname, 'static')))
 
+app.use(require('./lib/middleware').logger(logger.child({ module: 'http' }), !!process.env.VERBOSE))
+
 app.use(require('./lib/middleware').qs())
 app.use(
   require('koa-session2')({
