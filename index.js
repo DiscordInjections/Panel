@@ -75,7 +75,17 @@ require('lasso').configure({
   plugins,
   includeSlotNames: !isDev,
   fingerprintsEnabled: !isDev,
-  bundlingEnabled: !isDev
+  bundlingEnabled: !isDev,
+  bundles: [
+    {
+      name: 'common',
+      dependencies: [{ intersection: ['./client/routes/*/index.marko'] }]
+    },
+    {
+      name: 'routes',
+      dependencies: ['./client/routes/*/index.marko']
+    }
+  ]
 })
 
 app.use(require('./lib/middleware').serveStatic({ urlPrefix: '/assets' }))
