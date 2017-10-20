@@ -93,6 +93,10 @@ app.use(require('koa-static')(path.join(__dirname, 'static')))
 
 app.use(require('./lib/middleware').logger(logger.child({ module: 'http' }), !!process.env.VERBOSE))
 
+if (process.env.WEBHOOK_SECRET) {
+  app.use(require('./lib/middleware').webhook(process.env.DISCORD_WEBHOOK, process.env.WEBHOOK_SECRET))
+}
+
 app.use(require('./lib/middleware').qs())
 app.use(
   require('koa-session2')({

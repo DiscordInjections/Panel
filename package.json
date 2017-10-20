@@ -14,6 +14,8 @@
     "client-oauth2": "^4.1.0",
     "dotenv-safe": "^4.0.4",
     "eris": "^0.7.0",
+    "execa": "^0.8.0",
+    "github-webhook-handler": "^0.6.0",
     "history": "^4.7.2",
     "impress-router": "^1.5.0",
     "ioredis": "^3.1.4",
