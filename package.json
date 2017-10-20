@@ -49,6 +49,7 @@
     "eslint": "^4.1.1"
   },
   "scripts": {
-    "debug": "browser-refresh . 2>&1 | bunyan"
+    "debug": "browser-refresh . 2>&1 | bunyan",
+    "migrate": "echo soon!"
   }
 }
