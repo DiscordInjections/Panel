@@ -52,6 +52,6 @@
   },
   "scripts": {
     "debug": "browser-refresh . 2>&1 | bunyan",
-    "migrate": "echo soon!"
+    "migrate": "knex migrate:latest"
   }
 }

@@ -43,12 +43,7 @@ process.on('unhandledRejection', (err, promise) => {
 
 // database connections
 const redis = new Redis(process.env.REDIS)
-Model.knex(
-  require('knex')({
-    client: 'postgres',
-    connection: process.env.POSTGRES
-  })
-)
+Model.knex(require('knex')(require('./knexfile')[process.env.NODE_ENV]))
 
 // load all dem models
 require('./models')
