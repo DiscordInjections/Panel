@@ -6,7 +6,6 @@ const dwh = require('./lib/dwh')
 
 const Koa = require('koa')
 const Redis = require('ioredis')
-const CSRF = require('koa-csrf')
 const http = require('http')
 const { Model } = require('objection')
 const url = require('url')
@@ -88,10 +87,6 @@ app.use(require('koa-static')(path.join(__dirname, 'static')))
 
 app.use(require('./lib/middleware').logger(logger.child({ module: 'http' }), !!process.env.VERBOSE))
 
-if (process.env.WEBHOOK_SECRET) {
-  app.use(require('./lib/middleware').webhook(process.env.DISCORD_WEBHOOK, process.env.WEBHOOK_SECRET))
-}
-
 app.use(require('./lib/middleware').qs())
 app.use(
   require('koa-session2')({
@@ -102,16 +97,14 @@ app.use(
 app.use(require('./lib/middleware').sessionLoader())
 app.use(require('./lib/middleware').cache(redis))
 app.use(
-  new CSRF({
-    invalidSessionSecretMessage: 'Invalid session secret',
-    invalidSessionSecretStatusCode: 403,
+  require('koa2-csrf').default({
     invalidTokenMessage: 'Invalid CSRF token',
     invalidTokenStatusCode: 403,
-    excludedMethods: ['GET', 'HEAD', 'OPTIONS'],
-    disableQuery: false
+    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
+    ignorePaths: ['/webhook']
   })
 )
-app.use(require('koa-json-body')())
+app.use(require('koa-json-body')({ returnRawBody: true }))
 app.use(require('./lib/middleware').marko(path.join(__dirname, 'client'), 'layout.marko'))
 app.use(require('./routes'))
 
