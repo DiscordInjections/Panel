@@ -40,69 +40,72 @@ router.post('/webhook', async ctx => {
     return ctx.logger.info('webhook ping')
   }
 
-  ctx.logger.info('webhook push')
-  dwh(process.env.DISCORD_WEBHOOK, {
-    title: 'Webhook',
-    description: 'A new push detected!',
-    color: 0xf46542,
-    fields: [
-      {
-        name: 'ref',
-        value: body.parsed.ref,
-        inline: true
-      },
-      {
-        name: 'head',
-        value: body.parsed.head,
-        inline: true
-      },
-      {
-        name: 'commits',
-        value: body.parsed.size,
-        inline: true
-      }
-    ]
-  })
-
-  // git pull myself
-  const cwd = path.join(__dirname, '..')
-  try {
-    await execa('git', ['pull'], { cwd })
-      .then(res => execa('npm', ['install'], { cwd }))
-      .then(res => execa('npm', ['run', 'migrate'], { cwd }))
-  } catch (err) {
+  setImmediate(async () => {
+    ctx.logger.info('webhook push')
     dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Error',
-      description: 'An error during the webhook happened!',
-      color: 9577852,
+      title: 'Webhook',
+      description: 'A new push detected!',
+      color: 0xf46542,
       fields: [
         {
-          name: 'Message',
-          value: err.message,
+          name: 'ref',
+          value: body.parsed.ref,
           inline: true
         },
         {
-          name: 'Stack',
-          value: '```' + err.stack + '```'
+          name: 'commits',
+          value: body.parsed.commits.length,
+          inline: true
+        },
+        {
+          name: 'compare',
+          value: body.parsed.compare
         }
       ]
     })
-  }
-  if (process.env.pm_id == null) {
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Webhook',
-      description: 'PM2 not detected, please restart the server manually',
-      color: 0xf46542
-    })
-  } else {
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Webhook',
-      description: 'PM2 detected, trying graceful restart!',
-      color: 0xf46542
-    })
 
-    process.exit(0)
-  }
+    // git pull myself
+    const cwd = path.join(__dirname, '..')
+    try {
+      await execa('git', ['pull'], { cwd })
+        .then(res => execa('npm', ['install'], { cwd }))
+        .then(res => execa('npm', ['run', 'migrate'], { cwd }))
+
+      ctx.logger.info('Webhook update finished!')
+      if (process.env.pm_id == null) {
+        dwh(process.env.DISCORD_WEBHOOK, {
+          title: 'Webhook',
+          description: 'PM2 not detected, please restart the server manually',
+          color: 0xf46542
+        })
+      } else {
+        dwh(process.env.DISCORD_WEBHOOK, {
+          title: 'Webhook',
+          description: 'PM2 detected, trying graceful restart!',
+          color: 0xf46542
+        })
+
+        process.exit(0)
+      }
+    } catch (err) {
+      dwh(process.env.DISCORD_WEBHOOK, {
+        title: 'Error',
+        description: 'An error during the webhook happened!',
+        color: 9577852,
+        fields: [
+          {
+            name: 'Message',
+            value: err.message,
+            inline: true
+          },
+          {
+            name: 'Stack',
+            value: '```' + err.stack + '```'
+          }
+        ]
+      })
+    }
+  })
 })
 
 /*

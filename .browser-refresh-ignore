@@ -5,3 +5,4 @@ static/
 *.marko.js
 *.dust.js
 *.coffee.js
+package-lock.json
