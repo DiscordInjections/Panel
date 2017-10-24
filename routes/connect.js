@@ -72,7 +72,6 @@ router.get('/github/callback', async ctx => {
   }
 
   // extend current users info
-  console.log(token)
   const patch = {
     github_access_token: token.accessToken,
     github_refresh_token: token.refreshToken,

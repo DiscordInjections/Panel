@@ -41,7 +41,6 @@ module.exports = class User extends Model {
   }
 
   fetchGithub (url, headers = {}) {
-    console.log(this.githubToken.sign({ url, headers }))
     return fetch(url, this.githubToken.sign({ url, headers }))
   }
 
