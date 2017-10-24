@@ -85,7 +85,8 @@ router.post('/webhook', async ctx => {
           color: 0xf46542
         })
 
-        process.exit(0)
+        // delay restart by 1 second
+        setTimeout(() => process.exit(0), 1000)
       }
     } catch (err) {
       dwh(process.env.DISCORD_WEBHOOK, {
