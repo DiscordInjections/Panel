@@ -1,6 +1,6 @@
 import moment from "moment"
 import md from "markdown-it"
-div.page-plugins
+div.page-plugins-add
   h1 -- Add a new Plugin
   div.categories
     div
@@ -50,48 +50,10 @@ div.page-plugins
             <span class="ion-plus"/>
             Add
             ---
-  div.filter
-    h2 -- Filter
-    div
-      div.search
-        label for="filter-search"
-          span class="ion-search" -- Search
-        input#label-search type="search" placeholder="Search" value=state.search
-      div.rating
-        span -- Minimum Rating
-        rating max=5 current=state.filterRating size="1rem" on-change("onChangeFilterRating")
-  h2.hidden -- Plugin list
-  ol.list start=(data.page * 10)
-    li for(plugin in data.plugins.results)
-      h3
-        ---
-        <span.ion-wrench if(plugin.category == "api")/>
-        <span.ion-wand if(plugin.category == "func")/>
-        <span.ion-clock if(plugin.category == "prod")/>
-        <span.ion-ios-game-controller-a if(plugin.category == "games")/>
-        <span.ion-asterisk if(plugin.category == "misc")/>
-        &nbsp;${plugin.name}
-        ---
-      div.meta
-        div.author
-          ---
-          <span.ion-person/>
-          <span.hidden>Author</span>
-          ${plugin.owner.username}
-          ---
-        div.updated
-          ---
-          <span.ion-clock/>
-          <span.hidden>Last update</span>
-          ${moment(plugin.updated_at).format("YYYY-MM-DD")}
-          (${moment(plugin.updated_at).fromNow()})
-          ---
-        div.repo
-          a href="${plugin.url}"
-            ---
-            <span.ion-merge/>
-            ${plugin.url}
-            ---
-      div.body -- $!{md().render(plugin.description)}
-      div.action
-        button data-action="install" data-plugin=plugin.name disabled -- Install
+  div.list data-csrf=data.csrf key="list"
+    h2 -- Choose a repository to add
+    filter-list on=["full_name"] items=state.repos
+      $ const item=arguments[1].item
+      div.repo on-click("selectRepository", item)
+        h3 -- ${item.full_name}
+        p -- ${item.description}

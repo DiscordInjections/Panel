@@ -1,0 +1,5 @@
+div.filter-list
+  input.filter-search type="search" value=state.filter on-input("onFilter") placeholder="Filter list"
+  ul
+    li for(item in input.items) if(item.full_name.indexOf(state.filter) >= 0 || (item.description && item.description.indexOf(state.filter) >= 0))
+      include(input, {item: item})

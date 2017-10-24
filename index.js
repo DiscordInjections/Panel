@@ -94,6 +94,7 @@ app.use(
     store: require('./lib/store').create(redis)
   })
 )
+app.use(require('koa-json-body')({ returnRawBody: true }))
 app.use(require('./lib/middleware').sessionLoader())
 app.use(require('./lib/middleware').cache(redis))
 app.use(
@@ -104,7 +105,6 @@ app.use(
     ignorePaths: ['/webhook']
   })
 )
-app.use(require('koa-json-body')({ returnRawBody: true }))
 app.use(require('./lib/middleware').marko(path.join(__dirname, 'client'), 'layout.marko'))
 app.use(require('./routes'))
 
