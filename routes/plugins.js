@@ -60,7 +60,7 @@ router.post('/add', async ctx => {
   const pkg = JSON.parse(Buffer.from(pkgr.content, 'base64').toString())
   dbe.version = pkg.version
   dbe.category = pkg.di_category || 'misc'
-  if (!dbe.teaser && pkg.description) {
+  if (pkg.description) {
     dbe.teaser = pkg.description
   }
 

@@ -34,6 +34,7 @@
     "markdown-it": "^8.4.0",
     "marko": "^4.5.2",
     "moment": "^2.18.1",
+    "node-schedule": "^1.2.5",
     "normalize.css": "^7.0.0",
     "normat": "^1.2.3",
     "objection": "^0.8.9",
