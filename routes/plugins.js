@@ -122,8 +122,6 @@ router.get('/:category/:page?', async ctx => {
   const plugins = await q.page(ctx.params.page - 1, 10)
   plugins.pages = Math.round(plugins.total / 10 + 0.5)
 
-  // TODO: allow adding of plugins
-
   ctx.marko('routes/plugins', {
     category: ctx.params.category,
     page: ctx.params.page,
