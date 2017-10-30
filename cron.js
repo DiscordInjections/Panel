@@ -102,9 +102,10 @@ async function updatePlugins () {
 schedule.scheduleJob('0 0 * * *', updatePlugins)
 setImmediate(updatePlugins)
 
-process.on('message', payload => {
+process.on('message', async payload => {
   if (payload.exit) {
     logger.trace('exiting crontab')
+    redis.del('cron:plugins')
     process.exit(payload.exit)
   }
 })
