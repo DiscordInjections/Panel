@@ -8,7 +8,7 @@ const Router = require('impress-router')
 const router = new Router()
 module.exports = router
 
-// router.mount('/api', require('./api'))
+router.use('/api', require('./api'))
 router.use('/connect', require('./connect'))
 router.use('/account', require('./account'))
 router.use('/plugins', require('./plugins'))
