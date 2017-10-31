@@ -45,6 +45,10 @@ module.exports = class User extends Model {
   }
 
   async verify (token) {
+    if (!this.token) {
+      return false
+    }
+
     // check for scrypt function
     if (this.token[0] !== '$') {
       const hash = crypto.createHash('sha256').update(token + this.salt).digest('base64')
@@ -57,6 +61,7 @@ module.exports = class User extends Model {
           JSON.stringify(defaultParams) +
           '$' +
           (await scrypt.kdf(token + this.salt, defaultParams).toString('base64'))
+        await User.query().patch({ hash: this.hash }).where(id, this.id)
       }
     } else {
       const [_, hasher, meta, hash] = this.token.split('$')
