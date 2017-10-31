@@ -105,7 +105,7 @@ setImmediate(updatePlugins)
 process.on('message', async payload => {
   if (payload.exit) {
     logger.trace('exiting crontab')
-    redis.del('cron:plugins')
+    await redis.del('cron:plugins')
     process.exit(payload.exit)
   }
 })
