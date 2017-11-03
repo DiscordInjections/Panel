@@ -148,3 +148,5 @@ dwh(process.env.DISCORD_WEBHOOK, {
   color: 6469211, // 9577852
   timestamp: new Date().toISOString()
 })
+
+updatePlugins()
