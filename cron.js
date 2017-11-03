@@ -130,6 +130,13 @@ setImmediate(updatePlugins)
 process.on('message', async payload => {
   if (payload.exit) {
     logger.trace('exiting crontab')
+
+    dwh(process.env.DISCORD_WEBHOOK, {
+      title: 'Status',
+      description: 'Cron is going back to sleep, master',
+      color: 6469211
+    })
+
     await redis.del('cron:plugins')
     process.exit(payload.exit)
   }
