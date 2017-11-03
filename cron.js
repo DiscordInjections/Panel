@@ -128,7 +128,7 @@ schedule.scheduleJob('0 0 * * *', updatePlugins)
 setImmediate(updatePlugins)
 
 process.on('message', async payload => {
-  if (payload.exit) {
+  if (typeof payload.exit !== 'undefined') {
     logger.trace('exiting crontab')
 
     dwh(process.env.DISCORD_WEBHOOK, {
@@ -138,7 +138,7 @@ process.on('message', async payload => {
     })
 
     await redis.del('cron:plugins')
-    process.exit(payload.exit)
+    setImmedate(() => process.exit(payload.exit))
   }
 })
 
