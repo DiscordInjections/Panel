@@ -9,6 +9,7 @@ const Redis = require('ioredis')
 const http = require('http')
 const { Model } = require('objection')
 const url = require('url')
+const { ms } = require('normat')
 
 // logger
 const { createLogger } = require('bunyan')
@@ -52,14 +53,38 @@ const schedule = require('node-schedule')
 
 async function updatePlugins () {
   if (!await redis.set('cron:plugins', Date.now(), 'NX')) {
-    logger.warn('failed to set working flag!')
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Cron',
-      description: 'Failed to set working flag!',
-      color: 9577852
-    })
+    const timestamp = await redis.get('cron:plugins')
+    const timespan = Date.now() - timestamp
+    if (timespan > 1000 * 60 * 60 * 24) {
+      logger.warn({ timespan }, 'resetting working flag!')
+      dwh(process.env.DISCORD_WEBHOOK, {
+        title: 'Cron',
+        description: 'Resetting working flag!',
+        fields: [
+          {
+            name: 'Last run',
+            value: new Date(timestamp).toUTCString(),
+            inline: true
+          },
+          {
+            name: 'Age',
+            value: ms(timespan) + ' ago',
+            inline: true
+          }
+        ],
+        color: 9577852
+      })
+      await redis.set('cron:plugins', Date.now())
+    } else {
+      logger.warn('failed to set working flag!')
+      dwh(process.env.DISCORD_WEBHOOK, {
+        title: 'Cron',
+        description: 'Failed to set working flag!',
+        color: 9577852
+      })
 
-    return
+      return
+    }
   }
 
   const plugins = await Plugin.query()
