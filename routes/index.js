@@ -1,7 +1,7 @@
+const { redis } = require('../bootstrap')
+
 const { User } = require('../models')
 const crypto = require('crypto')
-const execa = require('execa')
-const dwh = require('../lib/dwh')
 const path = require('path')
 
 const Router = require('impress-router')
@@ -41,70 +41,11 @@ router.post('/webhook', async ctx => {
   }
 
   setImmediate(async () => {
-    ctx.logger.info('webhook push')
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Webhook',
-      description: 'A new push detected!',
-      color: 0xf46542,
-      fields: [
-        {
-          name: 'ref',
-          value: body.parsed.ref,
-          inline: true
-        },
-        {
-          name: 'commits',
-          value: body.parsed.commits.length,
-          inline: true
-        },
-        {
-          name: 'compare',
-          value: body.parsed.compare
-        }
-      ]
-    })
+    ctx.logger.info(
+      { ref: body.parsed.ref, commits: body.parsed.commits.length, compare: body.parsed.compare },
+      'webhook push'
+    )
 
-    // git pull myself
-    const cwd = path.join(__dirname, '..')
-    try {
-      await execa('git', ['pull'], { cwd })
-        .then(res => execa('npm', ['install'], { cwd }))
-        .then(res => execa('npm', ['run', 'migrate'], { cwd }))
-
-      ctx.logger.info('Webhook update finished!')
-      if (process.env.pm_id == null) {
-        dwh(process.env.DISCORD_WEBHOOK, {
-          title: 'Webhook',
-          description: 'PM2 not detected, please restart the server manually',
-          color: 0xf46542
-        })
-      } else {
-        dwh(process.env.DISCORD_WEBHOOK, {
-          title: 'Webhook',
-          description: 'PM2 detected, trying graceful restart!',
-          color: 0xf46542
-        })
-
-        // delay restart by 1 second
-        setTimeout(() => process.exit(0), 1000)
-      }
-    } catch (err) {
-      dwh(process.env.DISCORD_WEBHOOK, {
-        title: 'Error',
-        description: 'An error during the webhook happened!',
-        color: 9577852,
-        fields: [
-          {
-            name: 'Message',
-            value: err.message,
-            inline: true
-          },
-          {
-            name: 'Stack',
-            value: '```' + err.stack + '```'
-          }
-        ]
-      })
-    }
+    await redis.publish('dip-master', JSON.stringify({ action: 'pull' }))
   })
 })

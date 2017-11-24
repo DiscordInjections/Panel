@@ -33,13 +33,28 @@ redisListener.on('message', async (channel, message) => {
     case 'dip-master':
       switch (data.action) {
         case 'pull':
-          const result = await execa('git', ['pull'], { cwd: __dirname })
+          let result = await execa('git', ['pull'], { cwd: __dirname })
           if (result.code !== 0) {
-            logger.error({ stdout: result.stdout, stderr: result.stderr, code: result.code }, 'failed to pull!')
-          } else {
-            logger.info('Successfully updated environment, restarting env')
-            redis.publish('dip-broadcast', JSON.stringify({ action: 'restart' }))
+            return logger.error({ stdout: result.stdout, stderr: result.stderr, code: result.code }, 'failed to pull!')
           }
+
+          result = await execa('npm', ['install'], { cwd: __dirname })
+          if (result.code !== 0) {
+            return logger.error(
+              { stdout: result.stdout, stderr: result.stderr, code: result.code },
+              'failed to install!'
+            )
+          }
+
+          result = await execa('npm', ['run', 'migrate'], { cwd: __dirname })
+          if (result.code !== 0) {
+            return logger.error(
+              { stdout: result.stdout, stderr: result.stderr, code: result.code },
+              'failed to run migrations!'
+            )
+          }
+          logger.info('Successfully pulled, installed deps and ran migrations, restarting')
+          redis.publish('dip-broadcast', JSON.stringify({ action: 'restart' }))
           break
         default:
           logger.warn({ channel, action: data.action }, 'unkown action!')
