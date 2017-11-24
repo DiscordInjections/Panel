@@ -23,7 +23,7 @@ redisListener.on('message', async (channel, message) => {
         case 'restart':
           logger.debug('Restarting process!')
           // manually emit shutdown message
-          process.emit('message', 'shutdown')
+          process.exit()
 
           break
         default:
