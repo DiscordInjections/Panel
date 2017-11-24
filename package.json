@@ -9,6 +9,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "async-exit-hook": "^2.0.1",
     "browser-refresh-taglib": "^1.1.0",
     "bunyan": "^1.8.12",
     "client-oauth2": "^4.1.0",
@@ -39,6 +40,7 @@
     "normat": "^1.2.3",
     "objection": "^0.8.9",
     "pg": "^7.0.1",
+    "pm2": "^2.7.2",
     "qs": "^6.5.1",
     "scrypt": "^6.0.3",
     "session": "^0.1.0",
@@ -47,7 +49,7 @@
   },
   "devDependencies": {
     "browser-refresh": "^1.7.2",
-    "eslint": "^4.1.1"
+    "eslint": "^4.10.0"
   },
   "scripts": {
     "debug": "browser-refresh . 2>&1 | bunyan",

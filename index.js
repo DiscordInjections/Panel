@@ -1,165 +1,71 @@
-require('./lib/patcher')
-const isDev = process.env.NODE_ENV === 'development'
-const path = require('path')
+const { logger, exit, redis, redisListener } = require('./bootstrap')
+const PM2 = require('pm2')
+const execa = require('execa')
 
-const dwh = require('./lib/dwh')
+logger.info('Starting up...')
 
-const Koa = require('koa')
-const Redis = require('ioredis')
-const http = require('http')
-const { Model } = require('objection')
-const url = require('url')
-
-// logger
-const { createLogger } = require('bunyan')
-const logger = createLogger({
-  name: 'panel',
-  serializers: require('./lib/serializers'),
-  src: isDev,
-  stream: process.stderr,
-  level: isDev ? 'trace' : 'info'
-})
-
-process.on('unhandledRejection', (err, promise) => {
-  logger.error({ err, promise }, 'unhandled rejection!')
-  dwh(process.env.DISCORD_WEBHOOK, {
-    title: 'Error',
-    description: 'An unhandled rejection happened!',
-    color: 9577852,
-    fields: [
-      {
-        name: 'Message',
-        value: err.message,
-        inline: true
-      },
-      {
-        name: 'Stack',
-        value: '```' + err.stack + '```'
-      }
-    ]
-  })
-})
-
-// database connections
-const redis = new Redis(process.env.REDIS)
-Model.knex(require('knex')(require('./knexfile')[process.env.NODE_ENV]))
-
-// load all dem models
-require('./models')
-
-// lets fork into our different processes
-const fork = require('child_process').fork
-const cron = fork('./cron')
-
-process.on('exit', async code => {
-  if (code != 0) {
-    logger.warn({ code }, 'process is exiting abnormally')
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Exit',
-      description: 'process is exiting abnormally!',
-      color: 9577852,
-      fields: [
-        {
-          name: 'Code',
-          value: code
-        }
-      ]
-    })
+// creating redis pubsub
+redisListener.subscribe('dip-broadcast', 'dip-master', (err, count) => {
+  if (err) {
+    logger.error({ err }, 'failed to subscribe to the channels')
   }
 
-  cron.send({ exit: code })
-  cron.on('exit', () => {
-    process.removeAllListeners('exit')
-    process.exit(code)
-  })
+  logger.trace({ count }, 'subscribed to redis channels')
 })
 
-// webapplication
-const app = new Koa()
-app.keys = JSON.parse(process.env.COOKIE_SECRET)
+redisListener.on('message', async (channel, message) => {
+  const data = JSON.parse(message)
+  logger.debug({ channel, action: data.action }, 'incoming message')
 
-app.use(require('koa-json-error')())
-app.use(require('./lib/middleware').discord(process.env.DISCORD_WEBHOOK))
+  switch (channel) {
+    case 'dip-broadcast':
+      switch (data.action) {
+        case 'restart':
+          logger.debug('Restarting process!')
+          // manually emit shutdown message
+          process.emit('message', 'shutdown')
 
-const plugins = [
-  'lasso-marko',
-  {
-    plugin: 'lasso-stylus',
-    config: {
-      use: [require('stylus-require-css-evaluator')],
-      includes: [path.join(__dirname, 'node_modules'), path.join(__dirname, 'client')]
+          break
+        default:
+          logger.warn({ channel, action: data.action }, 'unkown action!')
+      }
+      break
+    case 'dip-master':
+      switch (data.action) {
+        case 'pull':
+          const result = await execa('git', ['pull'], { cwd: __dirname })
+          if (result.code !== 0) {
+            logger.error({ stdout: result.stdout, stderr: result.stderr, code: result.code }, 'failed to pull!')
+          } else {
+            logger.info('Successfully updated environment, restarting env')
+            redis.publish('dip-broadcast', JSON.stringify({ action: 'restart' }))
+          }
+          break
+        default:
+          logger.warn({ channel, action: data.action }, 'unkown action!')
+      }
+      break
+
+    default:
+      logger.warn({ channel }, 'message on unkown channel')
+  }
+})
+
+PM2.connect(async err => {
+  const { apps } = require('./pm2.config.json')
+  for (let app of apps) {
+    logger.trace({ app }, 'checking PM2 config')
+    try {
+      await new Promise((rs, rj) =>
+        PM2.describe(app.name, (err, pl) => {
+          if (err) return rj(err)
+          if (!pl.length) return rj(new Error('process not started'))
+          rs(pl)
+        })
+      )
+    } catch (err) {
+      logger.debug({ name: app.name }, 'PM2 config not found')
+      PM2.start(app)
     }
   }
-]
-if (!isDev) plugins.push('lasso-optimize-iife')
-require('lasso').configure({
-  plugins,
-  includeSlotNames: !isDev,
-  fingerprintsEnabled: !isDev,
-  bundlingEnabled: !isDev,
-  bundles: [
-    {
-      name: 'common',
-      dependencies: [{ intersection: ['./client/routes/*/index.marko'] }]
-    },
-    {
-      name: 'routes',
-      dependencies: ['./client/routes/*/index.marko']
-    }
-  ]
-})
-
-app.use(require('./lib/middleware').serveStatic({ urlPrefix: '/assets' }))
-app.use(require('koa-static')(path.join(__dirname, 'static')))
-
-app.use(require('./lib/middleware').logger(logger.child({ module: 'http' }), !!process.env.VERBOSE))
-
-app.use(require('./lib/middleware').qs())
-app.use(
-  require('koa-session2')({
-    key: 'disid',
-    store: require('./lib/store').create(redis)
-  })
-)
-app.use(require('koa-json-body')({ returnRawBody: true }))
-app.use(require('./lib/middleware').sessionLoader())
-app.use(require('./lib/middleware').cache(redis))
-app.use(
-  require('koa2-csrf').default({
-    invalidTokenMessage: 'Invalid CSRF token',
-    invalidTokenStatusCode: 403,
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
-    ignorePaths: ['/webhook']
-  })
-)
-app.use(require('./lib/middleware').marko(path.join(__dirname, 'client'), 'layout.marko'))
-app.use(require('./routes'))
-
-const port = +process.env.PORT
-const host = process.env.BIND
-app.listen(port, host, () => {
-  logger.info({ host, port }, 'app listening')
-
-  if (process.send) {
-    process.send('online')
-  }
-
-  dwh(process.env.DISCORD_WEBHOOK, {
-    title: 'Status',
-    description: 'DI-Panel has been started',
-    color: 6469211, // 9577852
-    timestamp: new Date().toISOString(),
-    fields: [
-      {
-        name: 'Host',
-        value: host,
-        inline: true
-      },
-      {
-        name: 'Port',
-        value: port,
-        inline: true
-      }
-    ]
-  })
 })
