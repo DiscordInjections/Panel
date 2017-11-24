@@ -100,8 +100,6 @@ app.use(require('./routes'))
 const port = +process.env.PORT
 const host = process.env.BIND
 app.listen(port, host, () => {
-  logger.info({ host, port }, 'app listening')
-
   if (process.send) {
     process.send('online')
   }
