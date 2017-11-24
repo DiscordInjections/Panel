@@ -1,116 +1,98 @@
-const { isDev, logger, redis, redisListener } = require("./bootstrap")
-const path = require("path")
+const { isDev, logger, models, redis, redisListener } = require('./bootstrap')
+const path = require('path')
 
-const { Model } = require("objection")
-const url = require("url")
-const { ms } = require("normat")
+const url = require('url')
 
-// database connections
-const redis = new Redis(process.env.REDIS)
-Model.knex(require("knex")(require("./knexfile")[process.env.NODE_ENV]))
+// creating redis pubsub
+redisListener.subscribe('dip-broadcast', (err, count) => {
+  if (err) {
+    logger.error({ err }, 'failed to subscribe to the channels')
+  }
 
-// load all dem models
-const { Plugin } = require("./models")
+  logger.trace({ count }, 'subscribed to redis channels')
+})
 
-logger.info("setting up the cron")
-const schedule = require("node-schedule")
+redisListener.on('message', async (channel, message) => {
+  const data = JSON.parse(message)
+  logger.debug({ channel, action: data.action }, 'incoming message')
 
-async function updatePlugins() {
-  if (!await redis.set("cron:plugins", Date.now(), "NX")) {
-    const timestamp = await redis.get("cron:plugins")
+  switch (channel) {
+    case 'dip-broadcast':
+      switch (data.action) {
+        case 'restart':
+          logger.debug('Restarting process!')
+          // manually emit shutdown message
+          process.exit()
+
+          break
+        default:
+          logger.warn({ channel, action: data.action }, 'unkown action!')
+      }
+      break
+
+    default:
+      logger.warn({ channel }, 'message on unkown channel')
+  }
+})
+
+logger.info('setting up the cron')
+const schedule = require('node-schedule')
+
+async function updatePlugins () {
+  const { Plugin } = models
+
+  // check for cron lock
+  if (!await redis.set('cron:plugins', Date.now(), 'NX')) {
+    const timestamp = await redis.get('cron:plugins')
     const timespan = Date.now() - timestamp
-    if (timespan > 1000 * 60 * 60 * 24) {
-      logger.warn({ timespan }, "resetting working flag!")
-      dwh(process.env.DISCORD_WEBHOOK, {
-        title: "Cron",
-        description: "Resetting working flag!",
-        fields: [
-          {
-            name: "Last run",
-            value: new Date(timestamp).toUTCString(),
-            inline: true,
-          },
-          {
-            name: "Age",
-            value: ms(timespan) + " ago",
-            inline: true,
-          },
-        ],
-        color: 9577852,
-      })
-      await redis.set("cron:plugins", Date.now())
-    } else {
-      logger.warn("failed to set working flag!")
-      dwh(process.env.DISCORD_WEBHOOK, {
-        title: "Cron",
-        description: "Failed to set working flag!",
-        color: 9577852,
-      })
 
-      return
+    // is the lock over 24h old?
+    if (timespan > 1000 * 60 * 60 * 24) {
+      logger.warn({ timestamp, timespan }, 'resetting working flag!')
+      await redis.set('cron:plugins', Date.now())
+    } else {
+      return logger.warn({ timestamp, timespan }, 'failed to set working flag!')
     }
   }
 
+  // TODO: maybe stream instead of fetching everything?
   const plugins = await Plugin.query()
-  logger.debug({ count: plugins.length }, "updating plugins...")
-  const l = logger.child({ submodule: "plugin" })
+  logger.debug({ count: plugins.length }, 'updating plugins...')
+  const l = logger.child({ submodule: 'plugin' })
 
   for (let plugin of plugins) {
-    const repo = plugin.url.replace(/^https?:\/\/(www\.)?github\.com\//, "")
-    l.trace({ repo }, "updating plugin")
+    const repo = plugin.url.replace(/^https?:\/\/(www\.)?github\.com\//, '')
+    l.trace({ repo }, 'updating plugin')
 
-    const pkgr = await fetch("https://api.github.com/repos/" + repo + "/contents/package.json").then(res => res.json())
+    const pkgr = await fetch('https://api.github.com/repos/' + repo + '/contents/package.json').then(res => res.json())
     if (!pkgr.content) {
-      l.error("package.json not found!")
+      l.error({ repo }, 'package.json not found!')
     }
 
-    const pkg = JSON.parse(Buffer.from(pkgr.content, "base64").toString())
+    const pkg = JSON.parse(Buffer.from(pkgr.content, 'base64').toString())
     plugin.version = pkg.version
-    plugin.category = pkg.di_category || "misc"
+    plugin.category = pkg.di_category || 'misc'
     if (pkg.description) {
       plugin.teaser = pkg.description
     }
 
-    const readme = await fetch("https://api.github.com/repos/" + repo + "/readme").then(res => res.json())
+    const readme = await fetch('https://api.github.com/repos/' + repo + '/readme').then(res => res.json())
     if (readme.content) {
-      plugin.description = Buffer.from(readme.content, "base64").toString()
+      plugin.description = Buffer.from(readme.content, 'base64').toString()
     } else {
-      plugin.description = ""
+      plugin.description = ''
     }
 
     try {
-      await Plugin.query().where("id", plugin.id).patch(plugin)
+      await Plugin.query().where('id', plugin.id).patch(plugin)
     } catch (err) {
-      l.error({ err }, "failed to patch plugin!")
+      l.error({ repo, err }, 'failed to patch plugin!')
     }
   }
 
-  logger.debug({ count: plugins.length }, "plugin list updated!")
-  redis.del("cron:plugins")
+  logger.info({ count: plugins.length }, 'plugin list updated!')
+  await redis.del('cron:plugins')
 }
-schedule.scheduleJob("0 0 * * *", updatePlugins)
+
+schedule.scheduleJob('0 0 * * *', updatePlugins)
 setImmediate(updatePlugins)
-
-process.on("message", async payload => {
-  if (typeof payload.exit !== "undefined") {
-    logger.trace("exiting crontab")
-
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: "Status",
-      description: "Cron is going back to sleep, master",
-      color: 6469211,
-    })
-
-    await redis.del("cron:plugins")
-    setImmedate(() => process.exit(payload.exit))
-  }
-})
-
-dwh(process.env.DISCORD_WEBHOOK, {
-  title: "Status",
-  description: "Cron Manager is ready to serve, master",
-  color: 6469211, // 9577852
-  timestamp: new Date().toISOString(),
-})
-
-updatePlugins()
