@@ -1,7 +1,4 @@
 const { isDev, logger, models, redis, redisListener } = require('./bootstrap')
-const path = require('path')
-
-const url = require('url')
 
 // creating redis pubsub
 redisListener.subscribe('dip-broadcast', (err, count) => {
