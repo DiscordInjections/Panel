@@ -1,44 +1,40 @@
-console.log(true)
+const { isDev, logger, models, redis, redisListener } = require('./bootstrap')
 
-/*
-const path = require('path')
-const Koa = require('koa')
-const Redis = require('ioredis')
-const http = require('http')
-const { Model } = require('objection')
-const url = require('url')
-
-// database connections
-const redis = new Redis(process.env.REDIS)
-Model.knex(require('knex')(require('./knexfile')[process.env.NODE_ENV]))
-
-// load all dem models
-require('./models')
-
-// lets fork into our different processes
-
-process.on('exit', async code => {
-  if (code != 0) {
-    logger.warn({ code }, 'process is exiting abnormally')
-    dwh(process.env.DISCORD_WEBHOOK, {
-      title: 'Exit',
-      description: 'process is exiting abnormally!',
-      color: 9577852,
-      fields: [
-        {
-          name: 'Code',
-          value: code
-        }
-      ]
-    })
+// creating redis pubsub
+redisListener.subscribe('dip-broadcast', (err, count) => {
+  if (err) {
+    logger.error({ err }, 'failed to subscribe to the channels')
   }
 
-  cron.send({ exit: code })
-  cron.on('exit', () => {
-    process.removeAllListeners('exit')
-    process.exit(code)
-  })
+  logger.trace({ count }, 'subscribed to redis channels')
 })
+
+redisListener.on('message', async (channel, message) => {
+  const data = JSON.parse(message)
+  logger.debug({ channel, action: data.action }, 'incoming message')
+
+  switch (channel) {
+    case 'dip-broadcast':
+      switch (data.action) {
+        case 'restart':
+          logger.debug('Restarting process!')
+          // manually emit shutdown message
+          process.exit()
+
+          break
+        default:
+          logger.warn({ channel, action: data.action }, 'unkown action!')
+      }
+      break
+
+    default:
+      logger.warn({ channel }, 'message on unkown channel')
+  }
+})
+
+const path = require('path')
+const Koa = require('koa')
+const http = require('http')
 
 // webapplication
 const app = new Koa()
@@ -66,11 +62,11 @@ require('lasso').configure({
   bundles: [
     {
       name: 'common',
-      dependencies: [{ intersection: ['./client/routes/* /index.marko'] }]
+      dependencies: [{ intersection: ['./client/routes/*/index.marko'] }]
     },
     {
       name: 'routes',
-      dependencies: ['./client/routes/* /index.marko']
+      dependencies: ['./client/routes/*/index.marko']
     }
   ]
 })
@@ -110,23 +106,5 @@ app.listen(port, host, () => {
     process.send('online')
   }
 
-  dwh(process.env.DISCORD_WEBHOOK, {
-    title: 'Status',
-    description: 'DI-Panel has been started',
-    color: 6469211, // 9577852
-    timestamp: new Date().toISOString(),
-    fields: [
-      {
-        name: 'Host',
-        value: host,
-        inline: true
-      },
-      {
-        name: 'Port',
-        value: port,
-        inline: true
-      }
-    ]
-  })
+  logger.info({ host, port }, 'DI-Panel has been started')
 })
-*/
