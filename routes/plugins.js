@@ -14,7 +14,16 @@ router.get('/add', async ctx => {
   // collect dem juicy public github repos
   const repos = await ctx.state.user
     .fetchGithub('https://api.github.com/user/repos?visibility=public')
-    .then(res => res.json())
+    .then(res => {
+      if(res.status == 401) {
+        delete ctx.state.user.github_access_token
+        await ctx.state.user.query().patch(ctx.state.user)
+        return false
+      }
+      return res.json()
+     })
+  
+  if(!repos) return ctx.redirect('/connect/github')
 
   // filter out already existing elements
   for (let idx = repos.length - 1; idx >= 0; idx--) {
