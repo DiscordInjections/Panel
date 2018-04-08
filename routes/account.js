@@ -11,7 +11,7 @@ router.get('/', async ctx => {
   // gonna grab dat juicy github info
   let github = false
   if (ctx.state.user.github_access_token) {
-    github = await ctx.cache('github:' + ctx.state.user.github, () => {
+    github = await ctx.cache('github:' + ctx.state.user.github, async () => {
       return ctx.state.user
         .fetchGithub('https://api.github.com/user')
         .then(res => {
