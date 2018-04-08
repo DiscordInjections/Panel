@@ -14,7 +14,7 @@ router.get('/', async ctx => {
     github = await ctx.cache('github:' + ctx.state.user.github, async () => {
       return ctx.state.user
         .fetchGithub('https://api.github.com/user')
-        .then(res => {
+        .then(async res => {
           if(res.status == 401) {
             delete ctx.state.user.github_access_token
             await ctx.state.user.query().patch(ctx.state.user)
