@@ -11,7 +11,7 @@ div.page-account
       div.discord
         h3.hidden -- Discord
         avatar(input.user)
-        span.username -- ${data.user.username}#${data.user.discriminator}
+        span.username -- ${data.user.username}#${data.user.discriminator.toString().padStart(4, '0')}
         // nothing to add in here ;)
       div.github class={connect: !input.github}
         h3.hidden -- Github
