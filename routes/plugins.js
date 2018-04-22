@@ -13,7 +13,7 @@ router.get('/add', async ctx => {
 
   // collect dem juicy public github repos
   const repos = await ctx.state.user
-    .fetchGithub('https://api.github.com/user/repos?visibility=public')
+    .fetchGithub('https://api.github.com/user/repos?per_page=100&visibility=public')
     .then(async res => {
       if(res.status == 401) {
         delete ctx.state.user.github_access_token
