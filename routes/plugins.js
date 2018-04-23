@@ -42,7 +42,7 @@ router.get('/add', async ctx => {
 router.post('/add', async ctx => {
   // first, see if this repo belongs to this user
   const repos = await ctx.state.user
-    .fetchGithub('https://api.github.com/user/repos?visibility=public')
+    .fetchGithub('https://api.github.com/user/repos?per_page=100&visibility=public')
     .then(res => res.json())
 
   const repo = repos.find(r => r.full_name === ctx.body.repo)
